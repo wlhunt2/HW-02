@@ -22,12 +22,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.apache.commons.io.IOUtils;
+
+
 
 public class AppsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    ArrayList<App> result = new ArrayList<>();
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,7 +69,7 @@ public class AppsFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
+        GetApps getApps = new GetApps();
 
 
 
@@ -120,73 +124,70 @@ public class AppsFragment extends Fragment {
 
 
     //todo: Need to update this for Apps rather than what this was copied from
-    private class GetKeywordsAsync extends AsyncTask<String, Void, String> {
+    private class GetApps extends AsyncTask<String, Void, ArrayList<App>> {
         @Override
-        protected String doInBackground(String... params) {
+        protected ArrayList<App> doInBackground(String... params) {
             HttpURLConnection connection = null;
             ArrayList<App> result = new ArrayList<>();
 
-//
-//            try {
-//                URL url = new URL(params[0]);
-//                connection = (HttpURLConnection) url.openConnection();
-//
-//                connection.connect();
-//
-//
-//                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-//                    //Create Json object and array
-//                    String json;
-//                    json = IOUtils.toString(connection.getInputStream(), "UTF-8");
-//
-//
-//                    JSONObject root = new JSONObject(json);
-//                    Log.d("demo", "Before JSONArray sources = ...");
-//                    JSONArray sources = root.getJSONArray("feed");
-//
-//                    //Log.d("demo","JSONArray sources = "+ sources.toString());
-//
-//                    //Grabs each json object and stores it in an ArrayList
-//                    for (int i = 0; i < sources.length(); i++) {
-//                        JSONObject sourceJson = sources.getJSONObject(i);
-//
-//                        ArrayList<String> qChoices = new ArrayList<>();
-//                        App app = new App();
-//
-//                        question.setId(sourceJson.getString("id"));
-//                        question.setText(sourceJson.getString("text"));
-//                        question.setImage(sourceJson.optString("image"));   // Uses optString in case there's no image URL
-//
-//
-//                        //This gets each choice from the nested  array of choices
-//                        JSONArray q = sourceJson.getJSONObject("choices").getJSONArray("choice");
-//
-//                        for (int j = 0; j < q.length(); j++) {
-//                            //qChoices.add(q.getJSONObject(j).toString());
-//                            qChoices.add(q.getString(j));
-//                            Log.d("demo", "qChoices: " + qChoices.get(j));
-//                        }
-//                        question.setChoices(qChoices);
-//
-//                        //String a = String.valueOf(sourceJson.getJSONObject("choices").getJSONArray("answer"));
-//                        String a = sourceJson.getJSONObject("choices").getString("answer");
-//                        question.setAnswer(a);
-//                        Log.d("demo", "ANSWER = " + question.getAnswer());
-//
-//
-//                        result.add(question);
-//                        Log.d("demo", "result = " + result.toString());
-//
-//                    }
-//                }
-//            } catch (Exception e) {
-//                //Handle Exceptions
-//                Log.d("demo", String.valueOf(e));
-//                Log.d("demo", "TriviaAsyncTask Exception");
-//            } finally {
-//                //Close the connections
-//            }
-            return "WRITE CODE FOR ASYNC";
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+
+                connection.connect();
+
+
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    //Create Json object and array
+                    String json;
+                    json = IOUtils.toString(connection.getInputStream(), "UTF-8");
+
+
+                    JSONObject root = new JSONObject(json);
+                    Log.d("demo", "Before JSONArray feed = ...");
+                    JSONArray feed = root.getJSONArray("feed");
+
+                    //Log.d("demo","JSONArray feed = "+ feed.toString());
+
+                    //Grabs each json object and stores it in an ArrayList
+                    for (int i = 0; i < feed.length(); i++) {
+                        JSONObject sourceJson = feed.getJSONObject(i);
+
+
+                        ArrayList<String> qChoices = new ArrayList<>(); //todo: change this
+                        App app = new App();
+
+                        // todo: These need to be some kind of nested loop to get each of these below
+//                        app.setName(sourceJson.getString("im:name"));
+//                        app.setPrice(Double.parseDouble(sourceJson.getString("im:price")));
+//                        app.setThumbnail(sourceJson.optString("im:image"));
+
+
+                        //todo: this is how the nested one was done before
+                        //This gets each choice from the nested  array of choices
+                        JSONArray q = sourceJson.getJSONObject("choices").getJSONArray("choice");
+
+                        for (int j = 0; j < q.length(); j++) {
+                            //qChoices.add(q.getJSONObject(j).toString());
+                            qChoices.add(q.getString(j));
+                            Log.d("demo", "qChoices: " + qChoices.get(j));
+                        }
+
+
+                        result.add(app);
+                        Log.d("demo", "result = " + result.toString());
+
+                    }
+                }
+            } catch (Exception e) {
+                //Handle Exceptions
+                Log.d("demo", String.valueOf(e));
+                Log.d("demo", "TriviaAsyncTask Exception");
+            } finally {
+                //Close the connections
+            }
+            return result;
         }
     }
 
