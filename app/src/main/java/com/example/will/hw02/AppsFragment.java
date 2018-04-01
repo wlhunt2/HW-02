@@ -9,14 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AppsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AppsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AppsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
